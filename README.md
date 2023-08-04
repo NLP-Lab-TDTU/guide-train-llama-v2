@@ -1,10 +1,17 @@
+### Requirements
+CUDA version: 11.8
+
+```bash
+pip install torch --index-url https://download.pytorch.org/whl/cu118
+pip install transformers accelerate datasets metrics tokenizers
+```
+
 ### Access Model Llama2
 Due to the copyright of Llama 2, we have to set the model to private, in order to access it, please follow the steps below.
 ```bash
 huggingface-cli login
 # then paste token
 ```
-
 ### Training
 Note: total batch_size = per_device_train_batch_size * gradient_accumulation_steps * num_gpu
 
