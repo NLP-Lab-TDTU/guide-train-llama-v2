@@ -1,3 +1,10 @@
+### Access Model Llama2
+Due to the copyright of Llama 2, we have to set the model to private, in order to access it, please follow the steps below.
+```bash
+huggingface-cli login
+# then paste token
+```
+
 ### Training
 Note: total batch_size = per_device_train_batch_size * gradient_accumulation_steps * num_gpu
 
@@ -17,10 +24,10 @@ You need to change some of the following values accordingly.
 - save_steps: Save checkpoint every n steps.
 - save_total_limit: Save only n latest checkpoints.
 
-```python
+```bash
 python run_clm.py \
 --model_name_or_path vietgpt/llama-2-7b-original \
---dataset_name cc_news \
+--dataset_name EleutherAI/pile \
 --per_device_train_batch_size 1 \
 --per_device_eval_batch_size 1 \
 --do_train --do_eval \
