@@ -13,9 +13,10 @@ huggingface-cli login
 # then paste token
 ```
 ### Training
-Note: total batch_size = per_device_train_batch_size * gradient_accumulation_steps * num_gpu
+Note: total batch_size = per_device_train_batch_size * gradient_accumulation_steps * num_gpus
 
 You need to change some of the following values accordingly.
+- num_processes: num_gpus. Notes: Set 8 to train on 8 GPUs. This command only works on 80GB GPUs
 - model_name_or_path: Name of model. Default: [vietgpt/llama-2-7b-original](https://huggingface.co/vietgpt/llama-2-7b-original) (This is the original model of Llama 2 that has been converted to Huggingface format).
 - tokenizer_name: Tokenizer of model. Default: [vietgpt/llama-2-7b-original](https://huggingface.co/vietgpt/llama-2-7b-original) (This is the original model of Llama 2 that has been converted to Huggingface format).
 
@@ -25,14 +26,14 @@ You need to change some of the following values accordingly.
 - per_device_eval_batch_size. Default: 1
 - output_dir: Ouput directory.
 - preprocessing_num_workers: Num processes to preprocess data. Default: 128 (Base on num_cpu)
-- dataloader_num_workers: Num processes to load data for training. Default: 64 (Base on total batch_size)
+- dataloader_num_workers: Num processes to load data for training. Default: 128 (Base on total batch_size or num_cpu)
 - gradient_accumulation_steps
 - logging_steps: Show log every n steps.
 - save_steps: Save checkpoint every n steps.
 - save_total_limit: Save only n latest checkpoints.
 
 ```bash
-python run_clm.py \
+accelerate launch --multi_gpu --num_processes 8 run_clm.py \
 --model_name_or_path vietgpt/llama-2-7b-original \
 --dataset_name EleutherAI/pile \
 --per_device_train_batch_size 1 \
@@ -45,7 +46,7 @@ python run_clm.py \
 --dataloader_num_workers 64 \
 --gradient_accumulation_steps 32 \
 --logging_steps 10 \
---save_steps 10 \
+--save_steps 50 \
 --save_total_limit 10 \
 --tokenizer_name vietgpt/llama-2-7b-original
 ```
