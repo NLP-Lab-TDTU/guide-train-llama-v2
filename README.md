@@ -54,5 +54,5 @@ accelerate launch --multi_gpu --num_processes 8 run_clm.py \
 --logging_steps 10 \
 --save_steps 50 \
 --save_total_limit 10 \
---tokenizer_name vietgpt/dama-7b-92000
+--tokenizer_name vietgpt/dama-7b-92000 |& tee -a train.log
 ```
