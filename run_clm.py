@@ -132,7 +132,7 @@ class DataTrainingArguments:
     Arguments pertaining to what data we are going to input our model for training and eval.
     """
 
-    dataset_name: Optional[str] = field(
+    dataset_path: Optional[str] = field(
         default=None, metadata={"help": "The name of the dataset to use (via the datasets library)."}
     )
     dataset_config_name: Optional[str] = field(
@@ -275,13 +275,17 @@ def main():
     # download the dataset.
     if data_args.dataset_name is not None:
         # Downloading and loading a dataset from the hub.
-        raw_datasets = load_dataset(
-            data_args.dataset_name,
-            data_args.dataset_config_name,
-            cache_dir=model_args.cache_dir,
-            use_auth_token=True if model_args.use_auth_token else None,
-            streaming=data_args.streaming,
-        )
+        # raw_datasets = load_dataset(
+        #     data_args.dataset_name,
+        #     data_args.dataset_config_name,
+        #     cache_dir=model_args.cache_dir,
+        #     use_auth_token=True if model_args.use_auth_token else None,
+        #     streaming=data_args.streaming,
+        # )
+
+        from datasets import load_from_disk
+        raw_datasets = load_from_disk(data_args.dataset_path)
+        
         if "validation" not in raw_datasets.keys():
             raw_datasets["validation"] = load_dataset(
                 data_args.dataset_name,
