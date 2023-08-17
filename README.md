@@ -28,8 +28,8 @@ You need to change some of the following values accordingly.
 - tokenizer_name: Tokenizer of the model. Default: [vietgpt/dama-7b-92000](https://huggingface.co/vietgpt/dama-7b-92000) (This is the original model of Llama 2 that has been converted to Huggingface format and replaced tokenizer part).
 - dataset_path: Path of the preprocessed dataset.
 
-- per_device_train_batch_size. Default: 1
-- per_device_eval_batch_size. Default: 1
+- per_device_train_batch_size. Default: 2
+- per_device_eval_batch_size. Default: 2
 - output_dir: Output directory.
 - preprocessing_num_workers: Num processes to preprocess data. Default: 128 (Based on num_cpu)
 - dataloader_num_workers: Num processes to load data for training. Default: 128 (Based on total batch_size or num_cpu)
@@ -42,15 +42,15 @@ You need to change some of the following values accordingly.
 accelerate launch --multi_gpu --num_processes 8 run_clm.py \
 --model_name_or_path vietgpt/dama-7b-92000 \
 --dataset_path ./my_dataset \
---per_device_train_batch_size 1 \
---per_device_eval_batch_size 1 \
+--per_device_train_batch_size 2 \
+--per_device_eval_batch_size 2 \
 --do_train --do_eval \
 --output_dir checkpoints \
 --preprocessing_num_workers 128 \
 --torch_dtype bfloat16 \
 --optim adafactor \
 --dataloader_num_workers 64 \
---gradient_accumulation_steps 32 \
+--gradient_accumulation_steps 16 \
 --logging_steps 10 \
 --save_steps 50 \
 --save_total_limit 10 \
