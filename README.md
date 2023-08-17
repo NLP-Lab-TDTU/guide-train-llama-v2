@@ -24,8 +24,8 @@ Note: total batch_size = per_device_train_batch_size * gradient_accumulation_ste
 
 You need to change some of the following values accordingly.
 - num_processes: num_gpus. Notes: Set 8 to train on 8 GPUs. This command only works on 80GB GPUs
-- model_name_or_path: Name of model. Default: [vietgpt/llama-2-7b-original](https://huggingface.co/vietgpt/llama-2-7b-original) (This is the original model of Llama 2 that has been converted to Huggingface format).
-- tokenizer_name: Tokenizer of the model. Default: [vietgpt/llama-2-7b-original](https://huggingface.co/vietgpt/llama-2-7b-original) (This is the original model of Llama 2 that has been converted to Huggingface format).
+- model_name_or_path: Name of model. Default: [vietgpt/dama-7b-92000](https://huggingface.co/vietgpt/dama-7b-92000) (This is the original model of Llama 2 that has been converted to Huggingface format and replaced tokenizer part).
+- tokenizer_name: Tokenizer of the model. Default: [vietgpt/dama-7b-92000](https://huggingface.co/vietgpt/dama-7b-92000) (This is the original model of Llama 2 that has been converted to Huggingface format and replaced tokenizer part).
 - dataset_path: Path of the preprocessed dataset.
 
 - per_device_train_batch_size. Default: 1
