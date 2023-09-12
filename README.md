@@ -40,7 +40,7 @@ You need to change some of the following values accordingly.
 
 ```bash
 accelerate launch --multi_gpu --num_processes 8 run_clm.py \
---model_name_or_path vietgpt/dama-7b-92000 \
+--model_name_or_path vietgpt/dama-2-7b-200000 \
 --dataset_path ./my_dataset \
 --per_device_train_batch_size 2 \
 --per_device_eval_batch_size 2 \
