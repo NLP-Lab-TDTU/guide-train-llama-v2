@@ -3,7 +3,7 @@ CUDA version: 11.8
 
 ```bash
 pip install torch --index-url https://download.pytorch.org/whl/cu118
-pip install transformers accelerate datasets metrics tokenizers
+pip install transformers accelerate datasets metrics tokenizers evaluate
 ```
 
 ### Access Model Llama2
