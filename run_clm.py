@@ -193,7 +193,7 @@ class DataTrainingArguments:
         if self.streaming:
             require_version("datasets>=2.0.0", "The streaming feature requires `datasets>=2.0.0`")
 
-        if self.dataset_name is None and self.train_file is None and self.validation_file is None:
+        if self.dataset_path is None and self.train_file is None and self.validation_file is None:
             raise ValueError("Need either a dataset name or a training/validation file.")
         else:
             if self.train_file is not None:
@@ -273,10 +273,10 @@ def main():
     #
     # In distributed training, the load_dataset function guarantee that only one local process can concurrently
     # download the dataset.
-    if data_args.dataset_name is not None:
+    if data_args.dataset_path is not None:
         # Downloading and loading a dataset from the hub.
         # raw_datasets = load_dataset(
-        #     data_args.dataset_name,
+        #     data_args.dataset_path,
         #     data_args.dataset_config_name,
         #     cache_dir=model_args.cache_dir,
         #     use_auth_token=True if model_args.use_auth_token else None,
@@ -288,7 +288,7 @@ def main():
         
         if "validation" not in raw_datasets.keys():
             raw_datasets["validation"] = load_dataset(
-                data_args.dataset_name,
+                data_args.dataset_path,
                 data_args.dataset_config_name,
                 split=f"train[:{data_args.validation_split_percentage}%]",
                 cache_dir=model_args.cache_dir,
@@ -296,7 +296,7 @@ def main():
                 streaming=data_args.streaming,
             )
             raw_datasets["train"] = load_dataset(
-                data_args.dataset_name,
+                data_args.dataset_path,
                 data_args.dataset_config_name,
                 split=f"train[{data_args.validation_split_percentage}%:]",
                 cache_dir=model_args.cache_dir,
@@ -594,13 +594,13 @@ def main():
         trainer.save_metrics("eval", metrics)
 
     kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "text-generation"}
-    if data_args.dataset_name is not None:
-        kwargs["dataset_tags"] = data_args.dataset_name
+    if data_args.dataset_path is not None:
+        kwargs["dataset_tags"] = data_args.dataset_path
         if data_args.dataset_config_name is not None:
             kwargs["dataset_args"] = data_args.dataset_config_name
-            kwargs["dataset"] = f"{data_args.dataset_name} {data_args.dataset_config_name}"
+            kwargs["dataset"] = f"{data_args.dataset_path} {data_args.dataset_config_name}"
         else:
-            kwargs["dataset"] = data_args.dataset_name
+            kwargs["dataset"] = data_args.dataset_path
 
     if training_args.push_to_hub:
         trainer.push_to_hub(**kwargs)
