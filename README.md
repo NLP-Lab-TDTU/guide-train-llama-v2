@@ -19,6 +19,12 @@ huggingface-cli login
 python prepare_dataset.py
 ```
 
+### Prepare model
+
+```bash
+python prepare_model.py --model-name vietgpt/dama-2-7b-200000 --output-path /path/to/model
+```
+
 ### Training
 Note: total batch_size = per_device_train_batch_size * gradient_accumulation_steps * num_gpus
 
@@ -40,7 +46,7 @@ You need to change some of the following values accordingly.
 
 ```bash
 accelerate launch --multi_gpu --num_processes 8 run_clm.py \
---model_name_or_path vietgpt/dama-2-7b-200000 \
+--model_name_or_path /path/to/model \
 --dataset_path ./my_dataset \
 --per_device_train_batch_size 2 \
 --per_device_eval_batch_size 2 \
