@@ -27,7 +27,7 @@ python prepare_model.py --model-name vietgpt/dama-2-7b-200000 --output-path /pat
 
 ### Training
 
-```bash
+```
 $ accelerate config
 -----------------------------------------------------------------------------------------------------------------------
 In which compute environment are you running?
