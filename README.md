@@ -26,6 +26,47 @@ python prepare_model.py --model-name vietgpt/dama-2-7b-200000 --output-path /pat
 ```
 
 ### Training
+
+```bash
+$ accelerate config
+-----------------------------------------------------------------------------------------------------------------------
+In which compute environment are you running?
+This machine
+-----------------------------------------------------------------------------------------------------------------------
+Which type of machine are you using?                                                                                                                                                                                                                   
+multi-GPU
+-----------------------------------------------------------------------------------------------------------------------
+How many different machines will you use (use more than 1 for multi-node training)? [1]: 1
+-----------------------------------------------------------------------------------------------------------------------                                                                                                                                
+Do you wish to optimize your script with torch dynamo?[yes/NO]:NO
+-----------------------------------------------------------------------------------------------------------------------                                                                                                                                
+Do you want to use DeepSpeed? [yes/NO]: yes
+-----------------------------------------------------------------------------------------------------------------------                                                                                                                                
+Do you want to specify a json file to a DeepSpeed config? [yes/NO]: NO
+-----------------------------------------------------------------------------------------------------------------------                                                                                                                                
+What should be your DeepSpeed's ZeRO optimization stage?
+2
+-----------------------------------------------------------------------------------------------------------------------                                                                                                                                
+Where to offload optimizer states?                                                                                                                                                                                                                     
+none
+-----------------------------------------------------------------------------------------------------------------------                                                                                                                                
+Where to offload parameters?                                                                                                                                                                                                                           
+none
+-----------------------------------------------------------------------------------------------------------------------                                                                                                                                
+How many gradient accumulation steps you're passing in your script? [1]: 16
+-----------------------------------------------------------------------------------------------------------------------                                                                                                                                
+Do you want to use gradient clipping? [yes/NO]: NO
+-----------------------------------------------------------------------------------------------------------------------                                                                                                                                
+Do you want to enable `deepspeed.zero.Init` when using ZeRO Stage-3 for constructing massive models? [yes/NO]: NO
+-----------------------------------------------------------------------------------------------------------------------                                                                                                                                
+How many GPU(s) should be used for distributed training? [1]:8
+-----------------------------------------------------------------------------------------------------------------------
+Do you wish to use FP16 or BF16 (mixed precision)?
+bf16
+-----------------------------------------------------------------------------------------------------------------------                                                                                                                                
+accelerate configuration saved at /home/cuong/.cache/huggingface/accelerate/default_config.yaml
+```
+
 Note: total batch_size = per_device_train_batch_size * gradient_accumulation_steps * num_gpus
 
 You need to change some of the following values accordingly.
