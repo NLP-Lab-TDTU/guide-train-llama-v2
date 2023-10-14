@@ -38,6 +38,8 @@ from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version, send_example_telemetry
 from transformers.utils.versions import require_version
 
+from transformers import TrainerCallback
+
 logger = logging.getLogger(__name__)
 
 
@@ -202,6 +204,18 @@ class DataTrainingArguments:
             if self.validation_file is not None:
                 extension = self.validation_file.split(".")[-1]
                 assert extension in ["csv", "json", "txt"], "`validation_file` should be a csv, a json or a txt file."
+
+class SaveCheckpointCallback(TrainerCallback):
+    def __init__(self, model, tokenizer):
+        self.model = model
+        self.tokenizer = tokenizer
+        
+    def on_epoch_end(self, args, state, control, **kwargs):
+        if state.is_local_process_zero:
+            checkpoint_name = f"checkpoint-epoch-{state.epoch}"
+            checkpoint_path = os.path.join(args.output_dir, checkpoint_name)
+            self.model.save_pretrained(checkpoint_path)
+            self.tokenizer.save_pretrained(checkpoint_path)
 
 
 def main():
@@ -554,6 +568,8 @@ def main():
         if training_args.do_eval and not is_torch_tpu_available()
         else None,
     )
+
+    trainer.add_callback(SaveCheckpointCallback(model, tokenizer))
 
     # Training
     if training_args.do_train:
