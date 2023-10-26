@@ -101,5 +101,6 @@ accelerate launch --multi_gpu --num_processes 8 run_clm.py \
 --logging_steps 100 \
 --save_steps 500 \
 --save_total_limit 10 \
+--learning_rate 3e-5 \
 --tokenizer_name /path/to/model |& tee -a train.log
 ```
