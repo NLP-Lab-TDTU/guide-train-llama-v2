@@ -1,12 +1,16 @@
 from datasets import load_dataset, concatenate_datasets, DatasetDict, Dataset
 
 list_datasets = [
-    "vietgpt/the_pile_openwebtext2",
     "vietgpt/openwebtext_en",
-    "vietgpt/c4_vi",
-    "vietgpt/OSCAR-2109",
-    "vietgpt/OSCAR-2201",
-    "vietgpt/OSCAR-2301",
+    "nlplabtdtu/cc-2014-52",
+    "nlplabtdtu/cc-2015-48",
+    "nlplabtdtu/cc-2016-50",
+    "nlplabtdtu/cc-2017-51",
+    "nlplabtdtu/cc-2018-51",
+    "nlplabtdtu/cc-2019-51",
+    "nlplabtdtu/cc-2020-51",
+    "nlplabtdtu/cc-2021-49",
+    "nlplabtdtu/cc-2022-40",
 ]
 
 train_datasets = Dataset.from_dict({'text': []})
@@ -29,4 +33,4 @@ datasets = DatasetDict({
 
 datasets = datasets.shuffle(seed=42)
 
-datasets.save_to_disk('my_dataset', num_proc=128)
+datasets.save_to_disk('my_dataset1', num_proc=128)
