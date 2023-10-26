@@ -88,7 +88,7 @@ You need to change some of the following values accordingly.
 ```bash
 accelerate launch --multi_gpu --num_processes 8 run_clm.py \
 --model_name_or_path /path/to/model \
---dataset_path ./my_dataset \
+--dataset_path ./my_dataset1 \
 --per_device_train_batch_size 2 \
 --per_device_eval_batch_size 2 \
 --do_train --do_eval \
@@ -98,8 +98,8 @@ accelerate launch --multi_gpu --num_processes 8 run_clm.py \
 --optim adafactor \
 --dataloader_num_workers 64 \
 --gradient_accumulation_steps 16 \
---logging_steps 10 \
---save_steps 50 \
+--logging_steps 100 \
+--save_steps 500 \
 --save_total_limit 10 \
---tokenizer_name vietgpt/dama-7b-92000 |& tee -a train.log
+--tokenizer_name /path/to/model |& tee -a train.log
 ```
