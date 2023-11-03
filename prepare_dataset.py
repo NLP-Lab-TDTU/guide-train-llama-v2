@@ -11,6 +11,11 @@ list_datasets = [
     "nlplabtdtu/cc-2020-51",
     "nlplabtdtu/cc-2021-49",
     "nlplabtdtu/cc-2022-40",
+    "vietgpt/the_pile_openwebtext2",
+    "vietgpt/c4_vi",
+    "vietgpt/OSCAR-2109",
+    "vietgpt/OSCAR-2201",
+    "vietgpt/OSCAR-2301"
 ]
 
 train_datasets = Dataset.from_dict({'text': []})
