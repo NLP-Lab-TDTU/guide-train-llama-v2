@@ -2,6 +2,7 @@ from datasets import load_dataset, concatenate_datasets, DatasetDict, Dataset
 
 list_datasets = [
     "vietgpt/openwebtext_en",
+    "nlplabtdtu/webtext_cc_en",
     "nlplabtdtu/cc-2014-52",
     "nlplabtdtu/cc-2015-48",
     "nlplabtdtu/cc-2016-50",
