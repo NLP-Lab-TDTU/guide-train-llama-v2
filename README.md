@@ -89,7 +89,7 @@ You need to change some of the following values accordingly.
 - save_total_limit: Save only n latest checkpoints.
 
 ```bash
-accelerate launch --multi_gpu --num_processes 8 run_clm.py \
+accelerate launch --config_file config.yml --multi_gpu --num_processes 8 run_clm.py \
 --model_name_or_path /path/to/model \
 --dataset_path ./my_dataset1 \
 --per_device_train_batch_size 2 \
@@ -106,4 +106,23 @@ accelerate launch --multi_gpu --num_processes 8 run_clm.py \
 --save_total_limit 10 \
 --learning_rate 3e-5 \
 --tokenizer_name /path/to/model |& tee -a train.log
+```
+
+### Tunining
+
+```bash
+accelerate launch --config_file config.yml --multi_gpu --num_processes 2 run_sft.py \
+--model_name_or_path vietgpt/dama-2-7b \
+--per_device_train_batch_size 1 \
+--per_device_eval_batch_size 1 \
+--output_dir checkpoints-chat \
+--torch_dtype bfloat16 \
+--optim lion_8bit \
+--dataloader_num_workers 64 \
+--gradient_accumulation_steps 32 \
+--logging_steps 100 --save_steps 500 \
+--save_total_limit 10 \
+--learning_rate 5e-6 \
+--tokenizer_name vietgpt/dama-2-7b-chat \
+--num_train_epochs 1
 ```
