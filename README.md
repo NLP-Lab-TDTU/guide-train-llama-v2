@@ -124,5 +124,5 @@ accelerate launch --config_file config.yml --multi_gpu --num_processes 2 run_sft
 --save_total_limit 10 \
 --learning_rate 5e-6 \
 --tokenizer_name vietgpt/dama-2-7b-chat \
---num_train_epochs 1
+--num_train_epochs 1 |& tee -a train_sft.log
 ```
