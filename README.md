@@ -3,7 +3,7 @@ CUDA version: 11.8
 
 ```bash
 pip install torch --index-url https://download.pytorch.org/whl/cu118
-pip install transformers accelerate datasets metrics tokenizers evaluate deepspeed --upgrade
+pip install transformers accelerate datasets metrics tokenizers evaluate deepspeed bitsandbytes --upgrade
 
 # flash-attention-2
 pip install flash-attn
