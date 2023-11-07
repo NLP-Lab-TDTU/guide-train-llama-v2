@@ -26,11 +26,11 @@ list_datasets = [
 ]
 
 for dataset_name, dataset_split in list_datasets:
-    train_dataset = load_dataset(dataset_name, split=f"{dataset_split}[1000:]", num_proc=128)
+    train_dataset = load_dataset(dataset_name, split=f"{dataset_split}[1000:]")
     train_dataset = train_dataset.map(lambda x: {'text': tokenizer.apply_chat_template(x['messages'], tokenize=False)}, num_proc=64, remove_columns=train_dataset.column_names)
     train_dataset = train_dataset.remove_columns([c for c in train_dataset.column_names if c != 'text'])
     
-    valid_dataset = load_dataset(dataset_name, split=f"{dataset_split}[:1000]", num_proc=128)
+    valid_dataset = load_dataset(dataset_name, split=f"{dataset_split}[:1000]")
     valid_dataset = valid_dataset.map(lambda x: {'text': tokenizer.apply_chat_template(x['messages'], tokenize=False)}, num_proc=64, remove_columns=valid_dataset.column_names)
     valid_dataset = valid_dataset.remove_columns([c for c in valid_dataset.column_names if c != 'text'])
 
@@ -42,11 +42,11 @@ list_datasets = [
 ]
 
 for dataset_name, dataset_split in list_datasets:
-    train_dataset = load_dataset(dataset_name, split=f"{dataset_split}", num_proc=128)
+    train_dataset = load_dataset(dataset_name, split=f"{dataset_split}")
     train_dataset = train_dataset.map(lambda x: {'text': tokenizer.apply_chat_template(x['messages'], tokenize=False)}, num_proc=64, remove_columns=train_dataset.column_names)
     train_dataset = train_dataset.remove_columns([c for c in train_dataset.column_names if c != 'text'])
     
-    valid_dataset = load_dataset(dataset_name, split=f"{dataset_split}", num_proc=128)
+    valid_dataset = load_dataset(dataset_name, split=f"{dataset_split}")
     valid_dataset = valid_dataset.map(lambda x: {'text': tokenizer.apply_chat_template(x['messages'], tokenize=False)}, num_proc=64, remove_columns=valid_dataset.column_names)
     valid_dataset = valid_dataset.remove_columns([c for c in valid_dataset.column_names if c != 'text'])
 
