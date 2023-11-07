@@ -25,7 +25,7 @@ python prepare_dataset.py
 ### Prepare model
 
 ```bash
-python prepare_model.py --model-name vietgpt/dama-2-7b-200000 --output-path /path/to/model
+python prepare_model.py --model-name vietgpt/dama-2-7b --output-path /path/to/model
 ```
 
 ### Training
