@@ -6,7 +6,6 @@ import torch
 from datasets import load_dataset
 from datasets import load_from_disk
 from trl import SFTTrainer, DataCollatorForCompletionOnlyLM
-from peft import LoraConfig
 
 from accelerate import Accelerator
 from transformers import AutoModelForCausalLM
