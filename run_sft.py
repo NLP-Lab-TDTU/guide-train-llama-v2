@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Optional
-
+import os
 import torch
 
 from datasets import load_dataset
@@ -156,7 +156,7 @@ def main():
     trainer.add_callback(SaveCheckpointCallback(model, tokenizer))
     
     with torch.autocast("cuda"): 
-        trainer.train(resume_from_checkpoint=False)
+        trainer.train(resume_from_checkpoint=True)
 
 if __name__ == "__main__":
     main()
