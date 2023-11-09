@@ -203,18 +203,6 @@ class DataTrainingArguments:
                 extension = self.validation_file.split(".")[-1]
                 assert extension in ["csv", "json", "txt"], "`validation_file` should be a csv, a json or a txt file."
 
-class SaveCheckpointCallback(TrainerCallback):
-    def __init__(self, model, tokenizer):
-        self.model = model
-        self.tokenizer = tokenizer
-        
-    def on_epoch_end(self, args, state, control, **kwargs):
-        if state.is_local_process_zero:
-            checkpoint_name = f"checkpoint-epoch-{state.epoch}"
-            checkpoint_path = os.path.join(args.output_dir, checkpoint_name)
-            self.model.save_pretrained(checkpoint_path)
-            self.tokenizer.save_pretrained(checkpoint_path)
-
 
 def main():
     # See all possible arguments in src/transformers/training_args.py
