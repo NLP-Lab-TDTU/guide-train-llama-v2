@@ -34,8 +34,6 @@ from transformers import (
     set_seed,
 )
 from transformers.testing_utils import CaptureLogger
-from transformers.trainer_utils import get_last_checkpoint
-from transformers.utils import check_min_version, send_example_telemetry
 from transformers.utils.versions import require_version
 
 logger = logging.getLogger(__name__)
@@ -217,10 +215,6 @@ def main():
     else:
         model_args, data_args, training_args = parser.parse_args_into_dataclasses()
 
-    # Sending telemetry. Tracking the example usage helps us better allocate resources to maintain them. The
-    # information sent is the one passed as arguments along with your Python/PyTorch versions.
-    send_example_telemetry("run_clm", model_args, data_args)
-
     # Setup logging
     logging.basicConfig(
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
@@ -238,31 +232,6 @@ def main():
     transformers.utils.logging.set_verbosity(log_level)
     transformers.utils.logging.enable_default_handler()
     transformers.utils.logging.enable_explicit_format()
-
-    # Log on each process the small summary:
-    logger.warning(
-        f"Process rank: {training_args.local_rank}, device: {training_args.device}, n_gpu: {training_args.n_gpu}"
-        + f"distributed training: {training_args.parallel_mode.value == 'distributed'}, 16-bits training: {training_args.fp16}"
-    )
-    logger.info(f"Training/evaluation parameters {training_args}")
-
-    # Detecting last checkpoint.
-    last_checkpoint = None
-    if os.path.isdir(training_args.output_dir) and training_args.do_train and not training_args.overwrite_output_dir:
-        last_checkpoint = get_last_checkpoint(training_args.output_dir)
-        if last_checkpoint is None and len(os.listdir(training_args.output_dir)) > 0:
-            raise ValueError(
-                f"Output directory ({training_args.output_dir}) already exists and is not empty. "
-                "Use --overwrite_output_dir to overcome."
-            )
-        elif last_checkpoint is not None and training_args.resume_from_checkpoint is None:
-            logger.info(
-                f"Checkpoint detected, resuming training at {last_checkpoint}. To avoid this behavior, change "
-                "the `--output_dir` or add `--overwrite_output_dir` to train from scratch."
-            )
-
-    # Set seed before initializing model.
-    set_seed(training_args.seed)
 
     # Get the datasets: you can either provide your own CSV/JSON/TXT training and evaluation files (see below)
     # or just provide the name of one of the public datasets available on the hub at https://huggingface.co/datasets/
@@ -344,32 +313,6 @@ def main():
                 **dataset_args,
             )
 
-    # See more about loading any type of standard or custom dataset (from files, python dict, pandas DataFrame, etc) at
-    # https://huggingface.co/docs/datasets/loading_datasets.html.
-
-    # Load pretrained model and tokenizer
-    #
-    # Distributed training:
-    # The .from_pretrained methods guarantee that only one local process can concurrently
-    # download model & vocab.
-
-    config_kwargs = {
-        "cache_dir": model_args.cache_dir,
-        "revision": model_args.model_revision,
-        "use_auth_token": True if model_args.use_auth_token else None,
-    }
-    if model_args.config_name:
-        config = AutoConfig.from_pretrained(model_args.config_name, **config_kwargs)
-    elif model_args.model_name_or_path:
-        config = AutoConfig.from_pretrained(model_args.model_name_or_path, **config_kwargs)
-    else:
-        config = CONFIG_MAPPING[model_args.model_type]()
-        logger.warning("You are instantiating a new config instance from scratch.")
-        if model_args.config_overrides is not None:
-            logger.info(f"Overriding config: {model_args.config_overrides}")
-            config.update_from_string(model_args.config_overrides)
-            logger.info(f"New config: {config}")
-
     tokenizer_kwargs = {
         "cache_dir": model_args.cache_dir,
         "use_fast": model_args.use_fast_tokenizer,
@@ -408,22 +351,21 @@ def main():
             )
         return output
 
-    with training_args.main_process_first(desc="dataset map tokenization"):
-        if not data_args.streaming:
-            tokenized_datasets = raw_datasets.map(
-                tokenize_function,
-                batched=True,
-                num_proc=data_args.preprocessing_num_workers,
-                remove_columns=column_names,
-                load_from_cache_file=not data_args.overwrite_cache,
-                desc="Running tokenizer on dataset",
-            )
-        else:
-            tokenized_datasets = raw_datasets.map(
-                tokenize_function,
-                batched=True,
-                remove_columns=column_names,
-            )
+    if not data_args.streaming:
+        tokenized_datasets = raw_datasets.map(
+            tokenize_function,
+            batched=True,
+            num_proc=data_args.preprocessing_num_workers,
+            remove_columns=column_names,
+            load_from_cache_file=not data_args.overwrite_cache,
+            desc="Running tokenizer on dataset",
+        )
+    else:
+        tokenized_datasets = raw_datasets.map(
+            tokenize_function,
+            batched=True,
+            remove_columns=column_names,
+        )
 
     if data_args.block_size is None:
         block_size = tokenizer.model_max_length
@@ -465,20 +407,19 @@ def main():
     # To speed up this part, we use multiprocessing. See the documentation of the map method for more information:
     # https://huggingface.co/docs/datasets/package_reference/main_classes.html#datasets.Dataset.map
 
-    with training_args.main_process_first(desc="grouping texts together"):
-        if not data_args.streaming:
-            lm_datasets = tokenized_datasets.map(
-                group_texts,
-                batched=True,
-                num_proc=data_args.preprocessing_num_workers,
-                load_from_cache_file=not data_args.overwrite_cache,
-                desc=f"Grouping texts in chunks of {block_size}",
-            )
-        else:
-            lm_datasets = tokenized_datasets.map(
-                group_texts,
-                batched=True,
-            )
+    if not data_args.streaming:
+        lm_datasets = tokenized_datasets.map(
+            group_texts,
+            batched=True,
+            num_proc=data_args.preprocessing_num_workers,
+            load_from_cache_file=not data_args.overwrite_cache,
+            desc=f"Grouping texts in chunks of {block_size}",
+        )
+    else:
+        lm_datasets = tokenized_datasets.map(
+            group_texts,
+            batched=True,
+        )
 
 
 def _mp_fn(index):
