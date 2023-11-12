@@ -7,7 +7,6 @@ https://huggingface.co/models?filter=text-generation
 # You can also adapt this script on your own causal language modeling task. Pointers for this are left as comments.
 
 import logging
-import math
 import os
 import sys
 from dataclasses import dataclass, field
@@ -15,23 +14,14 @@ from itertools import chain
 from typing import Optional
 
 import datasets
-import evaluate
-import torch
 from datasets import load_dataset
 
 import transformers
 from transformers import (
-    CONFIG_MAPPING,
     MODEL_FOR_CAUSAL_LM_MAPPING,
-    AutoConfig,
-    AutoModelForCausalLM,
     AutoTokenizer,
     HfArgumentParser,
-    Trainer,
     TrainingArguments,
-    default_data_collator,
-    is_torch_tpu_available,
-    set_seed,
 )
 from transformers.testing_utils import CaptureLogger
 from transformers.utils.versions import require_version
@@ -233,15 +223,6 @@ def main():
     transformers.utils.logging.enable_default_handler()
     transformers.utils.logging.enable_explicit_format()
 
-    # Get the datasets: you can either provide your own CSV/JSON/TXT training and evaluation files (see below)
-    # or just provide the name of one of the public datasets available on the hub at https://huggingface.co/datasets/
-    # (the dataset will be downloaded automatically from the datasets Hub).
-    #
-    # For CSV/JSON files, this script will use the column called 'text' or the first column if no column called
-    # 'text' is found. You can easily tweak this behavior (see below).
-    #
-    # In distributed training, the load_dataset function guarantee that only one local process can concurrently
-    # download the dataset.
     if data_args.dataset_path is not None:
         # Downloading and loading a dataset from the hub.
         # raw_datasets = load_dataset(
@@ -254,7 +235,7 @@ def main():
 
         from datasets import load_from_disk
         raw_datasets = load_from_disk(data_args.dataset_path)
-        
+
         if "validation" not in raw_datasets.keys():
             raw_datasets["validation"] = load_dataset(
                 data_args.dataset_path,
