@@ -89,7 +89,7 @@ def main():
         desc="Running tokenizer on dataset",
     )
 
-    block_size = 2048
+    block_size = args.block_size
 
     # group texts in blocks of block_size
     def group_texts(examples):
