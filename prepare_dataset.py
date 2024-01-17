@@ -50,6 +50,7 @@ list_datasets = [
 
     # Vietnamese
     ("vietgpt/exam-vn-rationale", "train"),
+    ("vietgpt/exam-vn", "train"),
     ("vietgpt/error-correction-vi", "train"),
     ("vietgpt/hdpl_sft", "train"),
     ("vietgpt/thuvienphapluat_sft", "train"),
