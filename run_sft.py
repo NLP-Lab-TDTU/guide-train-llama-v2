@@ -1,3 +1,4 @@
+import math
 from dataclasses import dataclass, field
 from typing import Optional
 import os
@@ -109,11 +110,11 @@ def main():
     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
     
-    dataset = load_from_disk("my_sft_dataset")
+    dataset = load_from_disk(data_args.dataset_path)
     
-    DEFAULT_TEMPLATE = """{% if messages[0]['role'] == 'system' %}{{ bos_token + '[INST] ' + '<<SYS>>\\n' + messages[0]['content'] + '\\n<</SYS>>\\n\\n' + messages[1]['content'] + ' [/INST]' }}{% for message in messages[:2] %}{% if message['role'] == 'user' %}{{ bos_token + '[INST] ' + message['content'] + ' [/INST]' }}{% elif message['role'] == 'assistant' %}{{ ' '  + message['content'] + ' ' + eos_token }}{% endif %}{% endfor %}{% else%}{% for message in messages %}{% if message['role'] == 'user' %}{{ bos_token + '[INST] ' + message['content'] + ' [/INST]' }}{% elif message['role'] == 'assistant' %}{{ ' '  + message['content'] + ' ' + eos_token }}{% endif %}{% endfor %}{% endif %}"""
     tokenizer = AutoTokenizer.from_pretrained(model_args.tokenizer_name, verbose=False)
-    tokenizer.chat_template = DEFAULT_TEMPLATE
+    tokenizer.add_special_tokens({'additional_special_tokens': ['<|im_start|>', '<|im_end|>']})
+    tokenizer.chat_template = "{% if not add_generation_prompt is defined %}{% set add_generation_prompt = false %}{% endif %}{% for message in messages %}{{'<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n'}}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}"
     tokenizer.pad_token = '<pad>'
     
     model = AutoModelForCausalLM.from_pretrained(
@@ -131,7 +132,7 @@ def main():
             
         def on_epoch_end(self, args, state, control, **kwargs):
             if state.is_local_process_zero:
-                checkpoint_name = f"checkpoint-epoch-{state.epoch}"
+                checkpoint_name = "checkpoint-epoch-" + str(math.round(state.epoch))
                 checkpoint_path = os.path.join(args.output_dir, checkpoint_name)
                 self.model.save_pretrained(checkpoint_path)
                 self.tokenizer.save_pretrained(checkpoint_path)
@@ -139,7 +140,7 @@ def main():
     training_args.prediction_loss_only = True
     training_args.save_strategy = "steps"
     
-    response_template = "[/INST]"
+    response_template = "<|im_start|>assistant"
     collator = DataCollatorForCompletionOnlyLM(response_template, tokenizer=tokenizer, pad_to_multiple_of=8)
     
     trainer = SFTTrainer(
@@ -148,7 +149,7 @@ def main():
         tokenizer=tokenizer,
         train_dataset=dataset['train'],
         dataset_text_field="text",
-        max_seq_length=2048,
+        max_seq_length=4096,
         dataset_num_proc=128,
         data_collator=collator,
     )
