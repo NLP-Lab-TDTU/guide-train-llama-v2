@@ -157,7 +157,7 @@ def main():
     trainer.add_callback(SaveCheckpointCallback(model, tokenizer))
     
     with torch.autocast("cuda"): 
-        trainer.train(resume_from_checkpoint=True)
+        trainer.train()
 
 if __name__ == "__main__":
     main()
