@@ -149,7 +149,7 @@ def main():
         tokenizer=tokenizer,
         train_dataset=dataset['train'],
         dataset_text_field="text",
-        max_seq_length=4096,
+        max_seq_length=3072,
         dataset_num_proc=128,
         data_collator=collator,
     )
